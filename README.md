@@ -1,123 +1,144 @@
 # priyankavobalaboina_2511666_part4_tableau_dashboard
-# Part 4: Tableau Executive Dashboard & Data Storytelling
+ # Executive Sales Dashboard — README
 
-## Business Problem Summary
+## Project Overview
 
-The retail leadership team requires an executive dashboard to monitor sales performance, profitability, customer segments, category performance, shipping performance, discount impact, and return patterns across Indian markets. The goal is to identify business opportunities and risks to support data-driven decision-making.
+An interactive Tableau dashboard analyzing sales performance, profitability, and operational metrics for a retail business across the 2024-2025 fiscal period. The dashboard provides executive-level insights across regional performance, product categories, customer segments, discount impact, shipping efficiency, and return rates.
 
-## Dataset Description
+---
+
+## Dataset
 
 | Attribute | Detail |
-|-----------|--------|
-| File | `dashboard_sales_data.xlsx` |
-| Records | 4,200 orders |
-| Time Period | January 2024 – December 2025 |
-| Regions | North, South, East, West |
-| States | 19 unique states |
-| Cities | 20 unique cities |
-| Categories | Furniture, Office Supplies, Technology |
-| Sub-categories | 13 (Tables, Storage, Accessories, Furnishings, Labels, Art, Copiers, Chairs, Binders, Phones, Paper, Machines, Bookcases) |
-| Customer Segments | Consumer, Corporate, Home Office |
-| Ship Modes | Standard Class, Second Class, First Class, Same Day |
-| Campaign Channels | Organic, Social, Referral, Paid, Email |
+|---|---|
+| **File** | `dashboard_sales_data.xlsx` |
+| **Records** | ~4,200 orders |
+| **Time Period** | 2024-2025 |
+| **Currency** | Indian Rupees (₹) |
+| **Regions** | East, North, South, West |
+| **Categories** | Furniture, Office Supplies, Technology |
+| **Customer Segments** | Consumer, Corporate, Home Office |
 
-### Field Types
+### Key Fields Used
 
-- **Date fields**: order_date, ship_date
-- **Geographic fields**: region, state, city
-- **Categorical fields**: customer_segment, category, sub_category, product_name, ship_mode, campaign_channel
-- **Numerical measures**: sales, quantity, discount, profit, delivery_days, customer_rating
-- **Binary/flag fields**: return_flag (1 = returned, 0 = not returned)
+| Field | Type | Usage |
+|---|---|---|
+| Order ID | Dimension | Unique order identifier |
+| Order Date | Date | Time-based analysis |
+| Ship Date | Date | Shipping delay calculation |
+| Ship Mode | Dimension | Shipping performance analysis |
+| Customer Segment | Dimension | Segment analysis & filter |
+| Region | Dimension | Regional performance & filter |
+| Category | Dimension | Category profitability & filter |
+| Sub-Category | Dimension | Detailed profitability breakdown |
+| Sales | Measure | Revenue analysis |
+| Profit | Measure | Profitability analysis |
+| Discount | Measure | Discount impact analysis |
+| Quantity | Measure | Order volume |
+| Returns | Dimension | Return rate calculation |
 
-## Tableau Workbook Description
+### Calculated Fields Created in Tableau
 
-The workbook `executive_dashboard.twbx` contains:
-- 1 Executive Dashboard
-- 7+ individual worksheet views
-- 5+ calculated fields
-- Interactive filters and dashboard actions
+| Field Name | Formula | Purpose |
+|---|---|---|
+| Profit Margin (%) | `SUM(Profit) / SUM(Sales) * 100` | KPI card & color encoding |
+| Return Rate (%) | `COUNT(Returned Orders) / COUNT(Orders) * 100` | Heat map & shipping analysis |
+| Shipping Delay (Days) | `DATEDIFF('day', [Order Date], [Ship Date])` | Shipping delay bucket creation |
+| Shipping Delay Bucket | `IF [Shipping Delay] = 0 THEN "Same Day" ELSEIF [Shipping Delay] <= 2 THEN "Fast (1-2 days)" ELSEIF [Shipping Delay] <= 4 THEN "Standard (3-4 days)" ELSEIF [Shipping Delay] <= 6 THEN "Slow (5-6 days)" ELSE "Very Slow (7+ days)" END` | Categorize shipping speed |
 
-## Calculated Fields Created
-
-| Calculated Field | Tableau Formula | Purpose |
-|-----------------|-----------------|---------|
-| Profit Margin | `[Profit] / [Sales]` | Measures profitability as a percentage of revenue |
-| Cost | `[Sales] - [Profit]` | Derives the cost component from sales and profit |
-| Average Order Value | `[Sales] / COUNTD([Order Id])` | Calculates revenue per unique order |
-| Return Rate | `SUM([Return Flag]) / COUNT([Order Id])` | Measures the proportion of returned orders |
-| Shipping Delay Bucket | `IF [Delivery Days] = 0 THEN "Same Day" ELSEIF [Delivery Days] <= 2 THEN "Fast (1-2 days)" ELSEIF [Delivery Days] <= 4 THEN "Normal (3-4 days)" ELSEIF [Delivery Days] <= 6 THEN "Slow (5-6 days)" ELSE "Very Slow (7+ days)" END` | Categorizes delivery performance into meaningful groups |
-| Discount Category | `IF [Discount] = 0 THEN "No Discount" ELSEIF [Discount] <= 0.1 THEN "Low (1-10%)" ELSEIF [Discount] <= 0.2 THEN "Medium (11-20%)" ELSE "High (21%+)" END` | Groups discount levels for analysis |
+---
 
 ## Dashboard Components
 
-### KPI Cards (Top Section)
-1. Total Sales (₹21.70 Cr)
-2. Total Profit (₹3.33 Cr)
-3. Profit Margin (15.35%)
-4. Total Orders (4,200)
-5. Return Rate (4.55%)
+### KPI Summary (Top Row)
+- Total Sales: ₹217M
+- Profit Margin: 15.35%
+- Total Profit: ₹33.3M
+- Return Rate: 4.55%
 
-### Charts/Views Included
-1. **Sales Trend View** – Line chart showing monthly sales over 2024-2025
-2. **Regional Performance View** – Bar chart showing sales and profit by region
-3. **Category Profitability View** – Bar chart showing profit by category and sub-category
-4. **Customer Segment View** – Bar chart comparing segments by sales, profit, and return rate
-5. **Shipping Performance View** – Bar chart showing delivery days by ship mode
-6. **Discount vs Profit View** – Scatter plot showing discount-profit relationship
-7. **Return Analysis View** – Bar chart showing return rates by category
+### Analytical Views (6 Charts)
 
-## Filters and Interactions Used
+| # | View Name | Chart Type | Key Insight |
+|---|---|---|---|
+| 1 | Regional Sales Performance | Horizontal Bar | South leads with ₹65M (30% of total) |
+| 2 | Category Profitability | Grouped Horizontal Bar | Technology drives 84% of profit |
+| 3 | Customer Segment | Grouped Vertical Bar | Home Office leads sales (₹74.5M) and profit (₹11.6M) |
+| 4 | Discount Impact on Profitability | Scatter Plot | Negative correlation r = -0.27 |
+| 5 | Shipping Delay Bucket | Horizontal Bar + Color | Standard shipping has highest volume (1,570) and returns (4.90%) |
+| 6 | Return Rate by Category & Segment | Heat Map | Furniture + Home Office = 9.14% (highest risk) |
 
-### Interactive Filters
-1. **Region** – Filter all views by geographic region
-2. **Category** – Filter by product category
-3. **Customer Segment** – Filter by Consumer, Corporate, or Home Office
-4. **Date Range** – Filter by order date
-5. **Ship Mode** – Filter by shipping method
-6. **Campaign Channel** – Filter by acquisition channel
+### Interactive Features
+- **4 Filters:** Region, Category, Customer Segment, Shipping Delay Bucket
+- **Filter Type:** Multiple Values (Checkbox List)
+- **Filter Scope:** Applied to all worksheets using the data source
+- **Filter Action:** Click on Regional Performance bar → filters entire dashboard to selected region
 
-### Dashboard Actions
-- **Filter Action**: Clicking on a region in the Regional Performance chart filters all other views to show data for that region only
-- **Highlight Action**: Hovering over a category highlights related data across views
+---
 
-## Key Business Insights
+## File Structure
 
-1. Technology drives 71% of total sales (₹15.39 Cr) with the highest profit margin (18.22%)
-2. Furniture has the highest return rate (7.67%) — nearly double the overall average
-3. Discounts above 30% result in negative profit margins (-4.95%)
-4. Home Office segment has the highest return rate (5.67%) despite strong sales
-5. South region leads in total sales (₹6.47 Cr) and profit (₹1.00 Cr)
-6. Standard Class shipping accounts for 58% of orders but has the longest average delivery (4.7 days)
-7. Sales show seasonal peaks in Feb, Sep-Oct and dips in Apr-May, Aug
-8. Sub-categories Copiers, Accessories, Phones, and Machines drive 84% of total profit
+```
+project/
+├── dashboard_sales_data.xlsx          # Source data file
+├── Executive_Sales_Dashboard.twbx     # Tableau Packaged Workbook
+├── outputs/
+│   ├── business_insights.md           # Key findings and recommendations
+│   ├── dashboard_story.md             # Narrative walkthrough of the dashboard
+│   ├── chart_selection_justification.md  # Chart type rationale for each view
+│   └── README.md                      # This file
+└── screenshots/
+    ├── executive_dashboard.png        # Full dashboard screenshot
+    ├── regional_performance_view.png  # Regional bar chart
+    ├── category_profitability_view.png # Category profitability chart
+    ├── customer_segment_view.png      # Customer segment grouped bars
+    ├── discount_impact_view.png       # Scatter plot with trend lines
+    ├── shipping_delay_bucket_view.png # Shipping delay horizontal bars
+    ├── return_rate_heatmap_view.png   # Return rate highlight table
+    └── shipping_performance_view.png  # Ship mode delivery speed chart
+```
 
-## Dashboard Story Summary
+---
 
-The business is performing well overall with a 15.35% profit margin. Technology is the growth engine, while Furniture presents both risk (high returns, low margins) and opportunity (high revenue potential if returns are reduced). Aggressive discounting (>30%) destroys value. The Home Office segment needs attention due to elevated return rates. Regional performance is balanced, suggesting a well-distributed market presence.
+## How to Open
 
-## Assumptions and Limitations
+1. **Install** Tableau Desktop or Tableau Public (free)
+2. **Open** `Executive_Sales_Dashboard.twbx` — this is a packaged workbook containing both the dashboard and data
+3. **Navigate** to the "Executive Dashboard" tab at the bottom
+4. **Interact** using the filters on the right panel or click any region bar to filter
 
-### Assumptions
-- Sales and profit values are in Indian Rupees (₹)
-- Return_flag = 1 indicates a completed return (not just initiated)
-- Delivery_days represents business days between order and ship date
-- All records are valid transactions (no test/dummy data)
-- Campaign_channel with missing values (~32 records) treated as "Unknown"
+---
 
-### Limitations
-- No customer lifetime value data available
-- No product cost breakdown (only derived cost)
-- No reason codes for returns
-- No competitor benchmarking data
-- Two-year window may not capture long-term trends
-- No inventory or stock-out data to explain sales dips
+## Design Decisions
 
-## Screenshots Included
+| Decision | Rationale |
+|---|---|
+| Horizontal bars for Regional & Category | Readable labels without rotation; natural for categorical comparison |
+| Scatter plot for Discount vs Profit | Only appropriate chart for two continuous variables showing correlation |
+| Heat map for Return Rates | Compact 3×3 matrix reveals category×segment interaction patterns |
+| KPIs at top | Information hierarchy — executives see summary first |
+| Filters on right panel | Keeps main chart area uncluttered; accessible without scrolling |
+| Color: Red/Green diverging for returns | Universal association — red = problem, green = healthy |
+| Color: Blue gradient for profit | Single-hue gradient for ordered quantitative data |
+| Removed gridlines | Improves data-ink ratio; reduces visual clutter |
+| ₹K format for Category Profitability | Prevents Office Supplies values from displaying as ₹0M |
 
-| Screenshot | Description |
-|-----------|-------------|
-| `full_dashboard.png` | Complete executive dashboard with all views and filters |
-| `sales_trend_view.png` | Monthly sales line chart for 2024-2025 |
-| `regional_performance_view.png` | Sales and profit by region bar chart |
-| `category_profitability_view.png` | Category and sub-category profit analysis |
-| `filter_interaction_view.png` | Dashboard with filter applied showing interaction |
+---
+
+## Key Findings Summary
+
+1. **South region** generates 30% of revenue — geographic concentration risk
+2. **Technology** drives 84% of profit with 16-18% margins
+3. **Discounts above 20%** consistently destroy profitability (r = -0.27)
+4. **Home Office + Furniture** = 9.14% return rate — highest risk combination
+5. **Same Day shipping** achieves 36% lower return rate than Standard shipping
+6. **Customer segments** are well-balanced (~₹70-75M each) — diversification strength
+
+---
+
+## Tools & Technologies
+
+- **Tableau Desktop** — Dashboard creation and visualization
+- **Excel** — Source data format
+- **Calculated Fields** — Profit Margin, Return Rate, Shipping Delay Bucket
+- **Tableau Analytics** — Trend lines, reference lines, correlation coefficient
+
